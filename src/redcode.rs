@@ -1,5 +1,6 @@
 use crate::internals;
 
+#[derive(Copy, Clone, Debug)]
 pub enum Opcode {
     DAT,
     SPL,
@@ -27,6 +28,7 @@ impl Default for Opcode {
     }
 }
 
+#[derive(Copy, Clone, Debug)]
 pub enum Mode {
     DIRECT,
     IMMEDIATE,
@@ -44,6 +46,7 @@ impl Default for Mode {
     }
 }
 
+#[derive(Copy, Clone, Debug)]
 pub enum Modifier {
     A,
     B,
