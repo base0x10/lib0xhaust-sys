@@ -42,10 +42,11 @@ impl<'a> Simulator<'a> {
             let dead_index = unsafe { *death_tab_ptr.offset(i as isize) as u16 };
             res.push(dead_index)
         }
+        self.reset_round();
         return res;
     }
 
-    pub fn reset_round(&mut self) {
+    fn reset_round(&mut self) {
         unsafe { internals::sim_reset_round(self.sim) };
     }
 
