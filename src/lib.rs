@@ -8,6 +8,7 @@ pub mod lib0xhaust {
     pub use crate::redcode::Mode;
     pub use crate::redcode::Modifier;
     pub use crate::redcode::Opcode;
+    pub use crate::redcode::Field;
 }
 
 #[cfg(test)]
