@@ -64,6 +64,7 @@ impl Default for Modifier {
 }
 
 pub type Insn = internals::insn_t;
+pub type Field = internals::field_t;
 
 impl Default for Insn {
     fn default() -> Self {
@@ -83,9 +84,9 @@ impl Insn {
         op: Opcode,
         modifier: Modifier,
         a_mode: Mode,
-        a_field: u16,
+        a_field: Field,
         b_mode: Mode,
-        b_field: u16,
+        b_field: Field,
     ) -> Insn {
         let op = match op {
             Opcode::DAT => internals::DAT,
@@ -153,7 +154,77 @@ impl Insn {
 
 impl std::fmt::Display for Insn {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        // TODO: reimplement dis1 from asm.c here
-        write!(f, "{} {} {}", self.in_, self.a, self.b)
+        let op_bits = (self.in_ as u32 >> internals::opPOS) & internals::opMASK;
+        let modifier_bits = (self.in_ as u32 >> internals::moPOS) & internals::moMASK;
+        let a_mode_bits = (self.in_ as u32 >> internals::maPOS) & internals::mMASK;
+        let b_mode_bits = (self.in_ as u32 >> internals::mbPOS) & internals::mMASK;
+
+        let op = match op_bits {
+            internals::DAT => "dat",
+            internals::SPL => "spl",
+            internals::MOV => "mov",
+            internals::DJN => "djn",
+            internals::ADD => "add",
+            internals::JMZ => "jmz",
+            internals::SUB => "sub",
+            internals::SEQ => "seq",
+            internals::SNE => "sne",
+            internals::SLT => "slt",
+            internals::JMN => "jmn",
+            internals::JMP => "jmp",
+            internals::NOP => "nop",
+            internals::MUL => "mul",
+            internals::MODM => "mod",
+            internals::DIV => "div",
+            internals::LDP => "ldp",
+            internals::STP => "STP",
+            _ => panic!(
+                "disassembled a poorly formatted insn, {}, {}, {}",
+                self.in_, self.a, self.b
+            ),
+        };
+
+        let modifier = match modifier_bits {
+            internals::mA => "a",
+            internals::mB => "b",
+            internals::mAB => "ab",
+            internals::mBA => "BA",
+            internals::mX => "x",
+            internals::mF => "f",
+            internals::mI => "i",
+            _ => panic!(
+                "disassembled a poorly formed insn, {}, {}, {}",
+                self.in_, self.a, self.b
+            ),
+        };
+        let a_mode = match a_mode_bits {
+            internals::DIRECT=> "$",
+            internals::IMMEDIATE=> "#",
+            internals::BINDIRECT=> "@",
+            internals::BPREDEC=> "<",
+            internals::BPOSTINC=> ">",
+            internals::AINDIRECT=> "*",
+            internals::APREDEC=> "{",
+            internals::APOSTINC=> "}",
+            _ => panic!(
+                "disassembled a poorly formed insn, {}, {}, {}",
+                self.in_, self.a, self.b
+            ),
+        };
+         let b_mode = match b_mode_bits {
+            internals::DIRECT=> "$",
+            internals::IMMEDIATE=> "#",
+            internals::BINDIRECT=> "@",
+            internals::BPREDEC=> "<",
+            internals::BPOSTINC=> ">",
+            internals::AINDIRECT=> "*",
+            internals::APREDEC=> "{",
+            internals::APOSTINC=> "}",
+            _ => panic!(
+                "disassembled a poorly formed insn, {}, {}, {}",
+                self.in_, self.a, self.b
+            ),
+        };
+        write!(f, "{}.{} {}{}, {}{}", op, modifier, a_mode, self.a, b_mode, self.b)
     }
 }

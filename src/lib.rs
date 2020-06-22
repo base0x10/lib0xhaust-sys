@@ -48,11 +48,6 @@ mod tests {
 
         s.load_warrior(0, &war);
         assert!(!is_clear(&s));
-        s.reset_round();
-        assert!(is_clear(&s));
-
-        s.load_warrior(0, &war);
-        assert!(!is_clear(&s));
         s.reset_battle();
         assert!(is_clear(&s));
     }

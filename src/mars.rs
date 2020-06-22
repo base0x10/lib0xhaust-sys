@@ -1,4 +1,5 @@
 use crate::internals;
+use crate::redcode;
 
 pub struct Simulator<'a> {
     pub sim: &'a mut internals::SimState_t,
@@ -25,7 +26,7 @@ impl<'a> Simulator<'a> {
     ///
     /// Returns a vector of dead warriors ordered from first death to last death
     /// Warrior indices not in the result survived until the end of the simulation
-    pub fn simulate(&mut self, warrior_positions: Vec<u16>) -> Vec<u16> {
+    pub fn simulate(&mut self, warrior_positions: Vec<redcode::Field>) -> Vec<u32> {
         let mut death_tab = Vec::with_capacity(self.sim.numWarriors as usize);
         for _ in 0..self.sim.numWarriors {
             death_tab.push(0);
@@ -39,7 +40,7 @@ impl<'a> Simulator<'a> {
 
         let mut res = Vec::with_capacity((self.sim.numWarriors - num_alive) as usize);
         for i in 0..self.sim.numWarriors - num_alive {
-            let dead_index = unsafe { *death_tab_ptr.offset(i as isize) as u16 };
+            let dead_index = unsafe { *death_tab_ptr.offset(i as isize) };
             res.push(dead_index)
         }
         self.reset_round();
