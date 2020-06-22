@@ -188,7 +188,7 @@ impl std::fmt::Display for Insn {
             internals::mA => "a",
             internals::mB => "b",
             internals::mAB => "ab",
-            internals::mBA => "BA",
+            internals::mBA => "ab",
             internals::mX => "x",
             internals::mF => "f",
             internals::mI => "i",
