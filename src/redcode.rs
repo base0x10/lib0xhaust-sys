@@ -198,33 +198,61 @@ impl std::fmt::Display for Insn {
             ),
         };
         let a_mode = match a_mode_bits {
-            internals::DIRECT=> "$",
-            internals::IMMEDIATE=> "#",
-            internals::BINDIRECT=> "@",
-            internals::BPREDEC=> "<",
-            internals::BPOSTINC=> ">",
-            internals::AINDIRECT=> "*",
-            internals::APREDEC=> "{",
-            internals::APOSTINC=> "}",
+            internals::DIRECT => "$",
+            internals::IMMEDIATE => "#",
+            internals::BINDIRECT => "@",
+            internals::BPREDEC => "<",
+            internals::BPOSTINC => ">",
+            internals::AINDIRECT => "*",
+            internals::APREDEC => "{",
+            internals::APOSTINC => "}",
             _ => panic!(
                 "disassembled a poorly formed insn, {}, {}, {}",
                 self.in_, self.a, self.b
             ),
         };
-         let b_mode = match b_mode_bits {
-            internals::DIRECT=> "$",
-            internals::IMMEDIATE=> "#",
-            internals::BINDIRECT=> "@",
-            internals::BPREDEC=> "<",
-            internals::BPOSTINC=> ">",
-            internals::AINDIRECT=> "*",
-            internals::APREDEC=> "{",
-            internals::APOSTINC=> "}",
+        let b_mode = match b_mode_bits {
+            internals::DIRECT => "$",
+            internals::IMMEDIATE => "#",
+            internals::BINDIRECT => "@",
+            internals::BPREDEC => "<",
+            internals::BPOSTINC => ">",
+            internals::AINDIRECT => "*",
+            internals::APREDEC => "{",
+            internals::APOSTINC => "}",
             _ => panic!(
                 "disassembled a poorly formed insn, {}, {}, {}",
                 self.in_, self.a, self.b
             ),
         };
-        write!(f, "{}.{} {}{}, {}{}", op, modifier, a_mode, self.a, b_mode, self.b)
+        write!(
+            f,
+            "{}.{} {}{}, {}{}",
+            op, modifier, a_mode, self.a, b_mode, self.b
+        )
     }
+}
+
+pub fn assemble_warrior(fname: &String, coresize: u32) -> Result<(u32, Vec<Insn>), &'static str> {
+    let fname =
+        std::ffi::CString::new("Hello, world!").expect("Could not convert string to CString");
+    let bytes = fname.into_bytes_with_nul();
+    let ptr: *const std::os::raw::c_char = bytes.as_ptr() as *const i8;
+
+    let code: [Insn; 100] = [Default::default(); 100];
+
+    let mut w = internals::warrior_t {
+        code: [Default::default(); 100],
+        len: 0,
+        start: 0,
+        have_pin: 0,
+        pin: 0,
+        name: std::ptr::null_mut(),
+        no: 0,
+    };
+    unsafe {
+        internals::asm_fname(ptr, &mut w, coresize);
+    };
+
+    return Ok((w.start, w.code.to_vec()));
 }
