@@ -233,13 +233,10 @@ impl std::fmt::Display for Insn {
     }
 }
 
-pub fn assemble_warrior(fname: &String, coresize: u32) -> Result<(u32, Vec<Insn>), &'static str> {
-    let fname =
-        std::ffi::CString::new("Hello, world!").expect("Could not convert string to CString");
+pub fn assemble_warrior(fname: &str, coresize: u32) -> Result<(u32, Vec<Insn>), &'static str> {
+    let fname = std::ffi::CString::new(fname).expect("Could not convert string to CString");
     let bytes = fname.into_bytes_with_nul();
     let ptr: *const std::os::raw::c_char = bytes.as_ptr() as *const i8;
-
-    let code: [Insn; 100] = [Default::default(); 100];
 
     let mut w = internals::warrior_t {
         code: [Default::default(); 100],
