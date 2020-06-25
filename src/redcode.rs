@@ -233,7 +233,15 @@ impl std::fmt::Display for Insn {
     }
 }
 
-pub fn assemble_warrior(fname: &str, coresize: u32) -> Result<(u32, Vec<Insn>), &'static str> {
+pub fn assemble_warrior(
+    fname: &str,
+    coresize: u32,
+    warrior_len: u32,
+) -> Result<(u32, Vec<Insn>), &'static str> {
+    if warrior_len > 100 {
+        return Err("0xhaust is unable to parse warriors longer than 100");
+    }
+
     let fname = std::ffi::CString::new(fname).expect("Could not convert string to CString");
     let bytes = fname.into_bytes_with_nul();
     let ptr: *const std::os::raw::c_char = bytes.as_ptr() as *const i8;
@@ -250,6 +258,16 @@ pub fn assemble_warrior(fname: &str, coresize: u32) -> Result<(u32, Vec<Insn>), 
     unsafe {
         internals::asm_fname(ptr, &mut w, coresize);
     };
+
+    // Pad or strip warrior to fit into the correct size
+    // The padding is for forwards compatability in case I fix the 100 insn limit
+    let mut code = w.code.to_vec();
+    while code.len() > warrior_len as usize {
+        code.pop();
+    }
+    while code.len() < warrior_len as usize {
+        code.push(Default::default())
+    }
 
     return Ok((w.start, w.code.to_vec()));
 }
