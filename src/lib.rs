@@ -22,7 +22,7 @@ mod tests {
     #[test]
     fn allocate_sim() {
         let s: crate::mars::Simulator =
-            crate::mars::Simulator::new(2, 8_000, 8_000, 80_000, 8_000 / 16);
+            crate::mars::Simulator::new(2, 8_000, 8_000, 80_000);
         drop(s);
     }
 
@@ -39,7 +39,7 @@ mod tests {
 
     #[test]
     fn test_reset_clears_core() {
-        let mut s = crate::mars::Simulator::new(2, 8_000, 8_000, 80_000, 8_000 / 16);
+        let mut s = crate::mars::Simulator::new(2, 8_000, 8_000, 80_000);
         assert!(is_clear(&s));
 
         let war: Vec<crate::redcode::Insn> = vec![crate::redcode::Insn {

@@ -6,8 +6,8 @@ pub struct Simulator<'a> {
 }
 
 impl<'a> Simulator<'a> {
-    pub fn new(nwar: u32, coresize: u32, processes: u32, cycles: u32, pspace: u32) -> Self {
-        let res = unsafe { internals::sim_alloc(nwar, coresize, processes, cycles, pspace) };
+    pub fn new(nwar: u32, coresize: u32, processes: u32, cycles: u32) -> Self {
+        let res = unsafe { internals::sim_alloc(nwar, coresize, processes, cycles) };
         if res.is_null() {
             panic!("Failed to allocated space for a new simulator within 0xhaust c library")
         }
@@ -16,7 +16,6 @@ impl<'a> Simulator<'a> {
         debug_assert!(sim.numWarriors == nwar);
         debug_assert!(sim.coreSize == coresize);
         debug_assert!(sim.maxProcesses == processes);
-        debug_assert!(sim.pspaceSize == pspace);
         debug_assert!(sim.cycles == cycles);
 
         return Simulator { sim: sim };
@@ -43,12 +42,8 @@ impl<'a> Simulator<'a> {
             let dead_index = unsafe { *death_tab_ptr.offset(i as isize) };
             res.push(dead_index)
         }
-        self.reset_round();
+        self.reset_battle();
         return res;
-    }
-
-    fn reset_round(&mut self) {
-        unsafe { internals::sim_reset_round(self.sim) };
     }
 
     pub fn reset_battle(&mut self) {

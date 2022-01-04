@@ -7,7 +7,6 @@ use std::path::PathBuf;
 fn main() {
     cc::Build::new()
         .file("0xhaust/asm.c")
-        .file("0xhaust/pspace.c")
         .file("0xhaust/sim.c")
         .warnings(false)
         .compile("0xhaust");
