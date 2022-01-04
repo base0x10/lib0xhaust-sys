@@ -10,8 +10,8 @@ build = "build.rs"
 
 
 [build-dependencies]
-bindgen = "0.54.0"
-cc = "1.0"
+bindgen = "0.59.2"
+cc = "1.0.72"
 
 [profile.release]
 debug = true
